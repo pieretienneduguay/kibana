@@ -20,7 +20,7 @@
 import { run } from '@kbn/dev-utils';
 import { TEAM_ASSIGNMENT_PIPELINE_NAME } from '../constants';
 import { fetch } from './get_data';
-import { noop } from '../utils';
+// import { noop } from '../utils';
 import { update } from './update_ingest_pipeline';
 
 export const uploadTeamAssignmentJson = () => run(execute, { description });
@@ -30,7 +30,7 @@ const updatePipeline = update(TEAM_ASSIGNMENT_PIPELINE_NAME);
 function execute({ flags, log }) {
   if (flags.verbose) log.verbose(`### Verbose logging enabled`);
 
-  fetch().fold(noop, updatePipeline(log));
+  fetch().fold((leftX) => log.error(`\n### Left: ${leftX}`), updatePipeline(log));
 }
 
 function description() {
