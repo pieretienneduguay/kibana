@@ -20,29 +20,30 @@
 import { run } from '@kbn/dev-utils';
 import { TEAM_ASSIGNMENT_PIPELINE_NAME } from '../constants';
 import { fetch } from './get_data';
-// import { noop } from '../utils';
+import { noop } from '../utils';
 import { update } from './update_ingest_pipeline';
-
-export const uploadTeamAssignmentJson = () => run(execute, { description });
 
 const updatePipeline = update(TEAM_ASSIGNMENT_PIPELINE_NAME);
 
-function execute({ flags, log }) {
+const execute = ({ flags, log }) => {
   if (flags.verbose) log.verbose(`### Verbose logging enabled`);
 
-  fetch().fold((leftX) => log.error(`\n### Left: ${leftX}`), updatePipeline(log));
-}
+  fetch().fold(noop, updatePipeline(log));
+};
 
-function description() {
-  return `
+const description = `
 
 Upload the latest team assignment pipeline def from src,
 to the cluster.
 
-
-Examples:
-
-node scripts/load_team_assignment.js --verbose
-
       `;
-}
+
+const flags = {
+  help: `
+--path             Required, path to the file to extract coverage data
+        `,
+};
+
+const usage = 'node scripts/load_team_assignment.js --verbose';
+
+export const uploadTeamAssignmentJson = () => run(execute, { description, flags, usage });
